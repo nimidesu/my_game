@@ -5,8 +5,9 @@ const JUMP_SPEED = 700;
 const MOVE_SPEED = 400;
 const MAX_JUMPS = 2;          // 地面を離れてから跳べる回数（2段ジャンプ）
 const FALL_GRAVITY_RATE = 2;  // 落ちるときは、重力を何倍にするか
-
-const player = { x: 80, y: 20, w: 32, h: 32, vx: 0, vy: 0, isGrounded: false, jumpsLeft: MAX_JUMPS, state: "idle", frameIndex: 0, frameTimer: 0, facing: 1 };
+const MAX_HP = 3;
+const HIT_TIME =1;
+const player = { x: 80, y: 20, w: 32, h: 32, vx: 0, vy: 0, isGrounded: false, jumpsLeft: MAX_JUMPS, state: "idle", frameIndex: 0, frameTimer: 0, facing: 1, hp: MAX_HP, hitTimer: 0 };
 
 // 状態ごとの色
 const STATE_COLORS = { idle: "#7ef5e1", run: "#6dd3ff", jump: "#ffd166", fall: "#ff9999" };
@@ -98,6 +99,10 @@ function updatePlayer(dt) {
     player.frameIndex = (player.frameIndex + 1) % ANIMS[player.state].count;
     player.frameTimer = 0;
   }
+  // 当たらない時間（タイマーの形・続ける）：残っている間は、dt だけ減らす
+  if (player.hitTimer > 0) {
+  player.hitTimer = player.hitTimer - dt;
+  }
 }
 
 
@@ -108,9 +113,9 @@ function drawPlayer() {
 
   ctx.fillStyle = "#e8eeff";
   ctx.font = "14px monospace";
-   ctx.fillText("vy = " + player.vy.toFixed(0) + "   jumpsLeft = " + player.jumpsLeft + "   state = " + player.state + "   frameIndex = " + player.frameIndex, 10, 20);
-   ctx.fillStyle = STATE_COLORS[player.state];   // 状態を見て、色を選ぶ
-    // 画像から1コマを切り出して描く（今は「走る」の段だけ）
+  ctx.fillText("vy = " + player.vy.toFixed(0) + "   jumpsLeft = " + player.jumpsLeft + "   state = " + player.state + "   frameIndex = " + player.frameIndex + "   hp = " + player.hp, 10, 20);
+  ctx.fillStyle = STATE_COLORS[player.state];   // 状態を見て、色を選ぶ
+  // 画像から1コマを切り出して描く（今は「走る」の段だけ）
   const sx = player.frameIndex * FRAME_SIZE;   // 切り出す左上の x：何コマ目か
   const sy = ANIMS[player.state].row * FRAME_SIZE;
  ctx.save();                                                       // 道具の今の状態を覚えておく
