@@ -6,12 +6,16 @@ function createEnemy(x, vx, canNotice = false) {
 }
 
 // ② 入れる：敵をまとめて入れる配列（７-６で入れ直すので let）
+
 let enemies = [];
+function resetEnemies() {
+enemies = [];
 const one = createEnemy(200, 80);
 enemies.push(createEnemy(100, 70));
 enemies.push(createEnemy(300, 90));
 enemies.push(createEnemy(500, 50));
 enemies.push(createEnemy(50, 80, true));
+}
 
 // ③ 動かす：配列の敵を1体ずつ取り出して、同じ処理をする
 function updateEnemies(dt) 
