@@ -1,5 +1,5 @@
 // 敵：作る・入れる・動かす・描く（足すものの形）
-
+const MAX_ENEMIES = 6;   // 敵は、同時にこの数まで
 // ① 作る：敵を1体作って返す関数（呼ぶたびに、新しい敵が1体できる）
 function createEnemy(x, vx, canNotice = false) {
   return { x: x, y: floor.y - 32, w: 32, h: 32, vx: vx, baseVx:Math.abs(vx), canNotice: canNotice, isAlert:false, alive: true };
@@ -8,6 +8,9 @@ function createEnemy(x, vx, canNotice = false) {
 // ② 入れる：敵をまとめて入れる配列（７-６で入れ直すので let）
 
 let enemies = [];
+let spawnTimer = 0;   // 敵を出すタイマー
+let nextSpawn = 2;    // 次の敵を出すまでの時間（秒
+
 function resetEnemies() {
 enemies = [];
 const one = createEnemy(200, 80);
@@ -15,8 +18,25 @@ enemies.push(createEnemy(100, 70));
 enemies.push(createEnemy(300, 90));
 enemies.push(createEnemy(500, 50));
 enemies.push(createEnemy(50, 80, true));
+spawnTimer = 0;
+nextSpawn = 2;
 }
-
+// 敵を時間で出す（タイマーの形・くり返す）
+function spawnEnemies(dt) {
+  spawnTimer = spawnTimer + dt;
+  if (spawnTimer >= nextSpawn) {
+    if (enemies.length < MAX_ENEMIES) {
+      // 左の端か右の端か、くじで決める
+      if (Math.random() < 0.5) {
+        enemies.push(createEnemy(0, 100));                    // 左の端から、右へ
+      } else {
+        enemies.push(createEnemy(canvas.width - 32, -100));   // 右の端から、左へ
+      }
+    }
+    spawnTimer = 0;
+    nextSpawn = 1 + Math.random() * 2;   // 次は 1〜3 秒のどれか
+  }
+}
 // ③ 動かす：配列の敵を1体ずつ取り出して、同じ処理をする
 function updateEnemies(dt) 
 {  
