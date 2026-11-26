@@ -108,6 +108,9 @@ function updatePlayer(dt) {
 
 // プレイヤーを描く（★ main.js の draw から呼ばれる）
 function drawPlayer() {
+  if (player.hitTimer > 0) {
+    ctx.globalAlpha = 0.4;   // 当たらない時間は、半透明で描く
+  }
   ctx.fillStyle = player.isGrounded ? "#7ef5e1" : "#ffd166";
   ctx.fillRect(player.x, player.y, player.w, player.h);
 
@@ -122,5 +125,7 @@ function drawPlayer() {
   ctx.translate(player.x + player.w / 2, player.y + player.h / 2);  // 原点をキャラの中心へ移す
   ctx.scale(player.facing, 1);                                      // 左向き（-1）なら、左右を反対にする
   ctx.drawImage(playerImg, sx, sy, FRAME_SIZE, FRAME_SIZE, -player.w / 2, -player.h / 2, player.w, player.h);
-  ctx.restore();     
+  ctx.restore();   
+  ctx.globalAlpha = 1;       // 半透明を元に戻す
+    
 }
