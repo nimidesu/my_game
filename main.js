@@ -26,6 +26,13 @@ document.addEventListener("keydown", (e) => {
     }
   }
 });
+
+// タイトルとゲームオーバーでは、クリックでも始められる
+canvas.addEventListener("pointerdown", () => {
+  if (gameState === "title" || gameState === "gameover") {
+    startGame();
+  }
+});
  
 // 役割ごとの「動かす」関数を呼ぶ
 function update(dt) {
@@ -34,6 +41,7 @@ function update(dt) {
   }
   const prevBottom = player.y + player.h;   // 動かす前（前の回）の、プレイヤーの下の辺
   updatePlayer(dt);
+  spawnEnemies(dt);
   updateEnemies(dt);
   collideWithEnemies(prevBottom);
     if (player.hp <= 0) {
@@ -57,7 +65,7 @@ function drawHud() {
   ctx.fillText("SCORE " + score, 500, 20);
   ctx.strokeStyle = "#e8eeff";
   ctx.strokeRect(500, 30, 120, 12);                       // HP バーの枠
-  ctx.fillStyle = "#7ef5e1";
+  ctx.fillStyle = "#4fc0ad";
   ctx.fillRect(500, 30, 120 * player.hp / MAX_HP, 12);   // HP の分だけ塗る
 }
 
@@ -67,6 +75,7 @@ function draw() {
   drawStage();
   if (gameState === "title") {
     drawMessage("my game", "Enter で始める");
+    drawAim();
     return;                 // タイトルでは、敵とプレイヤーは描かない
   }
   drawEnemies();
@@ -78,6 +87,7 @@ function draw() {
   if (gameState === "gameover") {
     drawMessage("GAME OVER", "Enter でもう一度");
   }
+  drawAim();                // いちばん最後
 }
 
 let last = performance.now();
