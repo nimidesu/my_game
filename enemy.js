@@ -2,7 +2,8 @@
 const MAX_ENEMIES = 6;   // 敵は、同時にこの数まで
 // ① 作る：敵を1体作って返す関数（呼ぶたびに、新しい敵が1体できる）
 function createEnemy(x, vx, canNotice = false) {
-  return { x: x, y: floor.y - 32, w: 32, h: 32, vx: vx, baseVx:Math.abs(vx), canNotice: canNotice, isAlert:false, alive: true };
+  const size = canNotice ? 48 : 32;
+  return { x: x, y: floor.y - size, w: size, h: size, vx: vx, baseVx:Math.abs(vx), canNotice: canNotice, isAlert:false, alive: true };
 }
 
 // ② 入れる：敵をまとめて入れる配列（７-６で入れ直すので let）
@@ -26,11 +27,15 @@ function spawnEnemies(dt) {
   spawnTimer = spawnTimer + dt;
   if (spawnTimer >= nextSpawn) {
     if (enemies.length < MAX_ENEMIES) {
+      // 30%（0.3未満）の確率で加速する大きな敵にする
+      const canNotice = Math.random() < 0.3;
+      const size = canNotice ? 48 : 32; // 右端の出現位置を計算するためにサイズを取得
+
       // 左の端か右の端か、くじで決める
       if (Math.random() < 0.5) {
-        enemies.push(createEnemy(0, 100));                    // 左の端から、右へ
+        enemies.push(createEnemy(0, 100, canNotice));                    // 左の端から、右へ
       } else {
-        enemies.push(createEnemy(canvas.width - 32, -100));   // 右の端から、左へ
+        enemies.push(createEnemy(canvas.width - size, -100, canNotice));   // 右の端から、左へ
       }
     }
     spawnTimer = 0;
