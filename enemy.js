@@ -2,7 +2,7 @@
 const MAX_ENEMIES = 6;   // 敵は、同時にこの数まで
 // ① 作る：敵を1体作って返す関数（呼ぶたびに、新しい敵が1体できる）
 function createEnemy(x, vx, canNotice = false) {
-  const size = canNotice ? 48 : 32;
+  const size = canNotice ? 90 : 32;
   return { x: x, y: floor.y - size, w: size, h: size, vx: vx, baseVx:Math.abs(vx), canNotice: canNotice, isAlert:false, alive: true };
 }
 
